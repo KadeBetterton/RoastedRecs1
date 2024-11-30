@@ -7,7 +7,7 @@ import re
 class SarcasticAssistant:
     def __init__(self):
         # Configure the Gemini API key
-        genai.configure(api_key="AIzaSyDh37esnX-KiysJhqx9P1OeWGUw67xjNh8")  # Replace with your actual API key
+        genai.configure(api_key="<your API key here>")  # Replace with your actual API key
 
     def create_prompt(self, user_top_tracks, user_top_artists, recommendations):
         """
