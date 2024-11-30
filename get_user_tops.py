@@ -6,8 +6,8 @@ from spotipy.oauth2 import SpotifyOAuth
 
 class get_user_tops():
     # Set your credentials
-    SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID", "99f2968c0a4f40dc87cc79ac8ec39116")
-    SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET", "67262e9c771344cdb2d89381aa018e5b")
+    SPOTIFY_CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID", "your ID here")
+    SPOTIFY_CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET", "<your secret here")
     SPOTIFY_REDIRECT_URI = "http://localhost:8888/callback"
 
     # Define the required scope
