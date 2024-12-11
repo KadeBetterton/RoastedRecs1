@@ -1,4 +1,4 @@
 # RoastedRecs
 A music recommendation assistant.
 
-Dataset used: 
+Dataset used: https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset
