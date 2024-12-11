@@ -1,4 +1,4 @@
 # RoastedRecs
-A sarcastic music recommendation app.
+A music recommendation assistant.
 
 Dataset used: 
