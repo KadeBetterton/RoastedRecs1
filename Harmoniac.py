@@ -1,8 +1,9 @@
 import re
 import time
-
 import google.generativeai as genai
+import numpy as np
 import pandas as pd
+from sklearn.metrics import silhouette_score
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
@@ -11,6 +12,7 @@ import warnings
 from unidecode import unidecode
 import tkinter as tk
 from tkinter import scrolledtext
+import matplotlib.pyplot as plt
 
 
 def normalize_text(text):
@@ -23,11 +25,6 @@ def normalize_text(text):
 
 # suppress non-critical warnings:
 warnings.filterwarnings("ignore")
-'''
-# suppress gRPC logging:
-os.environ["GRPC_VERBOSITY"] = "ERROR"
-os.environ["GRPC_LOG_SEVERITY"] = "ERROR"
-'''
 
 # configure Gemini:
 genai.configure(api_key="AIzaSyDh37esnX-KiysJhqx9P1OeWGUw67xjNh8")
@@ -76,7 +73,7 @@ def generate_explanation(selected_song, recommendations):
     response = model.generate_content(prompt)
 
     '''
-    # use textwrap to format the output:
+    # use textwrap to format the output for IDE output (for use without GUI):
     wrapped_response = textwrap.fill(response.text, width=80)
 
     return wrapped_response
@@ -88,15 +85,15 @@ def generate_explanation(selected_song, recommendations):
 def load_and_preprocess_data(file_path):
     data = pd.read_csv(file_path)
 
-    # Remove duplicate tracks by name & artist
+    # remove duplicate tracks by name & artist:
     data = data.drop_duplicates(subset=['track_name', 'artists'])
 
-    # Exclude specific genres
+    # exclude specific genres:
     excluded_genres = ['brazil', 'turkish', 'malay', 'anime', 'iranian', 'sleep', 'kids', 'latin', 'french', 'tango',
                        'study', 'indian', 'children', 'pop-film', 'j-pop', 'j-dance', 'cantopop', 'mandopop', 'disney']
     data = data[~data['track_genre'].isin(excluded_genres)]
 
-    # Keep only relevant features and drop rows with missing values
+    # keep only relevant features & drop rows w/ missing values:
     features = [
         'danceability', 'energy', 'loudness', 'speechiness', 'acousticness',
         'instrumentalness', 'liveness', 'valence', 'tempo'
@@ -115,64 +112,91 @@ def scale_features(data, feature_columns):
     return scaled_data, scaler
 
 
-# K-means recommendations:
+# determine optimal num of clusters using elbow method:
+def find_optimal_clusters(data, max_clusters=15):
+    inertias = []
+    for k in range(1, max_clusters + 1):
+        kmeans = KMeans(n_clusters=k, random_state=42)
+        kmeans.fit(data)
+        inertias.append(kmeans.inertia_)
+
+    '''
+    # plot elbow curve:
+    plt.figure(figsize=(8, 6))
+    plt.plot(range(1, max_clusters + 1), inertias, marker='o')
+    plt.xlabel('Number of Clusters (k)')
+    plt.ylabel('Inertia')
+    plt.title('Elbow Method for Optimal k')
+    plt.show()
+    '''
+
+    return inertias
+
+# to detect elbow point:
+def find_elbow_point(inertias):
+    deltas = np.diff(inertias)
+    second_deltas = np.diff(deltas)
+    elbow_point = np.argmin(second_deltas) + 1  # +1 because of index shift
+    return elbow_point
+
+# makes K-means recommendations:
 def kmeans_recommend_songs(selected_title, user_input_features, data, scaled_data, scaler, pca, kmeans, n_recommendations=5):
     user_input_df = pd.DataFrame([user_input_features], columns=scaled_data.columns)
     user_scaled = scaler.transform(user_input_df)
     user_pca = pca.transform(user_scaled)
     cluster_label = kmeans.predict(user_pca)[0]
 
-    # Filter songs from the same cluster
+    # filter songs from same cluster:
     cluster_songs = data[data['Cluster'] == cluster_label]
 
-    # Compute similarity within the cluster
+    # compute similarity w/in cluster:
     cluster_songs['Similarity'] = cosine_similarity(user_input_df, cluster_songs[scaled_data.columns])[0]
 
-    # Ensure selected_title is normalized and filter songs
+    # ensure selected_title is normalized (for consistency) & filter songs:
     if selected_title:
-        selected_title_normalized = normalize_text(selected_title)  # Normalize for consistency
+        selected_title_normalized = normalize_text(selected_title)
         cluster_songs = cluster_songs[
             ~cluster_songs['track_name'].fillna('').apply(normalize_text).str.contains(selected_title_normalized, case=False)
         ]
 
-    # Sort by similarity and return top recommendations
+    # sort by similarity & return top recommendations:
     recommendations = cluster_songs.sort_values(by='Similarity', ascending=False).head(n_recommendations)
     return recommendations
 
 
 
-# Content-based recommendations:
+# make content-based recommendations:
 def content_based_recommend_songs(user_input_features, data, feature_columns, selected_song, n_recommendations=5):
     user_input_df = pd.DataFrame([user_input_features], columns=feature_columns)
     similarities = cosine_similarity(user_input_df, data[feature_columns])
     data['Similarity'] = similarities[0]
 
-    # Normalize the selected song title for filtering
+    # normalize selected song title for filtering:
     selected_title_normalized = normalize_text(selected_song['track_name'])
 
-    # Filter out songs that have identical or overlapping titles
+    # filter out songs that have identical or overlapping titles:
     data = data[
         ~data['track_name'].apply(lambda x: selected_title_normalized in normalize_text(x))
     ]
 
-    # Exclude the user-selected song
+    # exclude user-selected song:
     recommendations = data[data['track_name'] != selected_song['track_name']].sort_values(by='Similarity', ascending=False).head(n_recommendations)
     return recommendations
 
 
-# Evaluate MRR:
+# evaluate MRR:
 def evaluate_mrr(recommendations, selected_song, feature_columns):
     selected_features = selected_song[feature_columns].values.reshape(1, -1)
     similarities = cosine_similarity(selected_features, recommendations[feature_columns])
     recommendations['Similarity'] = similarities[0]
     recommendations = recommendations.sort_values(by='Similarity', ascending=False)
     for rank, (_, row) in enumerate(recommendations.iterrows(), start=1):
-        if row['Similarity'] > 0.8:  # Example threshold for relevance
+        if row['Similarity'] > 0.8:  # threshold for relevance
             return 1 / rank
-    return 0  # No relevant recommendations
+    return 0  # no relevant recommendations
 
 
-# Compute diversity:
+# compute diversity:
 def compute_diversity(recommendations, feature_columns):
     features = recommendations[feature_columns].values
     pairwise_distances = cosine_similarity(features)
@@ -190,26 +214,28 @@ class ChatInterface:
         self.kmeans = kmeans
         self.feature_columns = feature_columns
 
-        # Set up the window
-        self.root.title("Music Recommendation System")
+        # set up window:
+        self.root.title("Harmoniac")
         self.root.geometry("600x600")
 
-        # Chat display
+        # chat display:
         self.chat_display = scrolledtext.ScrolledText(self.root, wrap=tk.WORD, state='disabled', height=25, width=70)
         self.chat_display.pack(pady=10)
 
-        # User input area
+        # user input area:
         self.user_input = tk.Entry(self.root, width=60)
         self.user_input.pack(pady=5)
         self.user_input.bind("<Return>", self.process_input)
 
-        # Send button
+        # send button:
         self.send_button = tk.Button(self.root, text="Send", command=self.send_input)
         self.send_button.pack()
 
-        # Start the conversation
+        # start conversation:
         self.add_message("Welcome! I'm here to help you find new music similar to what you already enjoy. Tell me an artist you like, or you can type 'quit' to exit.", sender="System")
-        self.awaiting_response = None  # Tracks context for user input
+
+        # tracks context for user input:
+        self.awaiting_response = None
 
     def add_message(self, message, sender="User"):
         self.chat_display.configure(state='normal')
@@ -244,7 +270,8 @@ class ChatInterface:
         artist_songs = self.data[self.data['artists'].str.contains(corrected_artist, case=False, na=False)]
 
         if artist_songs.empty:
-            self.add_message(f"Sorry, no songs found for '{corrected_artist}' in the dataset.", sender="System")
+            self.add_message(f"Sorry, no songs found for '{corrected_artist}' in the dataset. Is there another "
+                             f"you'd like me to look for?", sender="System")
             return
 
         self.add_message(f"Okay, here are some songs by {corrected_artist}:", sender="System")
@@ -293,33 +320,30 @@ class ChatInterface:
             self.add_message("Invalid method choice. Please choose again.", sender="System")
             return
 
-        # Format and display recommendations
+        # format & display recommendations:
         self.add_message("\nMy recommendations:", sender="System")
         for _, row in recommendations.iterrows():
-            # Replace ";" with "and" in the 'artists' column for display
+            # replace ";" with "and" in the 'artists' column for display:
             artists_cleaned = row['artists'].replace(';', ' and ')
             formatted_recommendation = f"- {row['track_name']} by {artists_cleaned} ({row['track_genre']})"
             self.add_message(formatted_recommendation, sender="System")
 
-        # Generate and display explanation
+        # generate & display explanation:
         explanation = generate_explanation(selected_song, recommendations)
         self.add_message("\nWhy you'll like these:", sender="System")
         self.add_message(explanation, sender="System")
 
-        # Compute and display MRR and diversity
+        # compute + display MRR & diversity:
         mrr = evaluate_mrr(recommendations, selected_song, self.feature_columns)
         diversity = compute_diversity(recommendations, self.feature_columns)
 
-        if mrr >= 0.7:
-            self.add_message(
-                f"\nThe MMR score of {mrr:.2f} means these songs are very musically similar to {selected_song['track_name']}",
-                sender="System")
-        if diversity <= 0.3:
-            self.add_message(
-                f"The diversity of these songs is {diversity:.2f}, meaning they are very similar to each other.",
-                sender="System")
 
-        # Offer the choice to restart or exit
+        if mrr >= 0.7:
+            print(f"\nThe MMR score of {mrr:.2f} means these songs are very musically similar to {selected_song['track_name']}.")
+        if diversity <= 0.3:
+            print(f"The diversity of these songs is {diversity:.2f}, meaning they are very similar to each other.")
+
+        # offer choice to restart or exit:
         self.add_message("\nWould you like to start with a new artist or quit? Type 'new artist' or 'quit'.",
                          sender="System")
         self.awaiting_response = self.restart_or_exit
@@ -336,21 +360,85 @@ class ChatInterface:
             self.add_message("Invalid input. Please type 'new artist' or 'quit'.", sender="System")
 
 
-# Main function to start the interface
 def main():
-    file_path = 'english_songs.csv'
+    file_path = '../fall '
     data, feature_columns = load_and_preprocess_data(file_path)
     scaled_data, scaler = scale_features(data, feature_columns)
-    pca = PCA(n_components=2)
+
+    # Apply PCA (calculate all components)
+    pca = PCA(n_components=5)
     pca.fit(scaled_data)
-    pca_data = pca.transform(scaled_data)
-    kmeans = KMeans(n_clusters=20, random_state=42)
+    pca_data = pca.fit_transform(scaled_data)
+
+    '''
+    # Plot explained variance ratio
+    plt.figure(figsize=(8, 6))
+    plt.plot(
+        np.cumsum(pca.explained_variance_ratio_),
+        marker='o',
+        linestyle='--',
+        label='Cumulative Explained Variance'
+    )
+    plt.xlabel('Number of Principal Components')
+    plt.ylabel('Cumulative Explained Variance')
+    plt.title('PCA Explained Variance')
+    plt.axhline(y=0.9, color='r', linestyle='--', label='90% Variance Threshold')
+    plt.legend()
+    plt.show()
+    
+
+    # Dynamically set n_components based on 90% variance
+    n_components = np.argmax(np.cumsum(pca.explained_variance_ratio_) >= 0.9) + 1
+    pca = PCA(n_components=n_components)
+    pca_data = pca.fit_transform(scaled_data)
+    print(f"Number of components selected to retain 90% variance: {n_components}")
+
+    # Find optimal number of clusters using the elbow method
+    max_clusters = 40
+    inertias = find_optimal_clusters(pca_data, max_clusters=max_clusters)
+    optimal_k_elbow = find_elbow_point(inertias)
+    print(f"The optimal number of clusters based on the elbow method: {optimal_k_elbow}")
+
+    # Compute silhouette scores for different cluster counts
+    silhouette_scores = []
+    for k in range(2, 10):
+        kmeans = KMeans(n_clusters=k, random_state=42)
+        kmeans.fit(pca_data)
+        score = silhouette_score(pca_data, kmeans.labels_)
+        silhouette_scores.append(score)
+
+    
+    # Plot silhouette scores
+    plt.figure(figsize=(8, 6))
+    plt.plot(range(2, 10), silhouette_scores, marker='o')
+    plt.xlabel('Number of Clusters (k)')
+    plt.ylabel('Silhouette Score')
+    plt.title('Silhouette Analysis for Optimal k')
+    plt.show()
+    
+
+    # Determine best number of clusters based on silhouette analysis
+    best_k_silhouette = np.argmax(silhouette_scores) + 2
+    print(f"The best number of clusters based on silhouette analysis: {best_k_silhouette}")
+
+    # Use elbow method
+    optimal_k = optimal_k_elbow
+    print(f"Using optimal number of clusters: {optimal_k}")
+    '''
+
+    # Fit KMeans with optimal number of clusters
+    kmeans = KMeans(n_clusters=3, random_state=42)
     kmeans.fit(pca_data)
     data['Cluster'] = kmeans.labels_
 
-    root = tk.Tk()
-    ChatInterface(root, data, scaled_data, scaler, pca, kmeans, feature_columns)
-    root.mainloop()
+    # Launch GUI
+    try:
+        root = tk.Tk()
+        ChatInterface(root, data, scaled_data, scaler, pca, kmeans, feature_columns)
+        root.mainloop()
+    except Exception as e:
+        print(f"An error occurred while launching the GUI: {e}")
 
 if __name__ == "__main__":
     main()
+
