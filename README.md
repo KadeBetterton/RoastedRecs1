@@ -8,18 +8,18 @@ To use the recommendation system, download harmoniac.py and english_songs.csv to
 The Walthrough zip file contains a Jupyter Notebook file of data visualizations.
 _________________________________________________________________________________________________________
 
-## 🚀 Features  
-- 🎤 **Artist Name Extraction**: Uses an **LLM (Gemini API)** to extract and correct artist names from user input.  
-- 🎼 **Song Recommendations**: Generates music recommendations based on:  
+## Features  
+- **Artist Name Extraction**: Uses an **LLM (Gemini API)** to extract and correct artist names from user input.  
+- **Song Recommendations**: Generates music recommendations based on:  
   - K-Means clustering (unsupervised learning).  
   - Content-based similarity (cosine similarity of song features).  
-- 📊 **Data Processing & Feature Engineering**:  
+- **Data Processing & Feature Engineering**:  
   - Preprocesses song metadata (removing duplicates, filtering out certain genres).  
   - Scales features using **MinMaxScaler** and applies **PCA** for dimensionality reduction.  
-- 🤖 **Chatbot Interface**:  
+- **Chatbot Interface**:  
   - Built with **Tkinter** for interactive user engagement.  
   - Allows users to explore new music through conversational interactions.  
-- 🎧 **Evaluation Metrics**:  
+- **Evaluation Metrics**:  
   - **Mean Reciprocal Rank (MRR)** for ranking accuracy.  
   - **Diversity Score** for ensuring variety in recommendations.  
 
@@ -60,7 +60,7 @@ python main.py
 5. Get personalized song recommendations and an explanation of why they match your choice.
 
 
-## 📂 Data
+## Data
 
 Dataset used: https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset
 
@@ -69,7 +69,7 @@ This is a CSV dataset of songs, including features like:
 - Genres (with some excluded, e.g., anime, kids, sleep, etc.)
 
 
-## 🏗 Technologies Used
+## Technologies Used
 
 Python, Tkinter (GUI)
 Pandas, NumPy (Data processing)
@@ -78,7 +78,7 @@ Google Gemini API (LLM-powered artist extraction & explanations)
 Matplotlib (Data visualization)
 
 
-## 🎨 Example Output
+## Example Output
 
 Welcome! I'm here to help you find new music similar to what you already enjoy.
 Tell me an artist you like, or you can type 'quit' to exit.
