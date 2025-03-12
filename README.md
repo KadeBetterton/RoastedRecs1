@@ -71,11 +71,13 @@ This is a CSV dataset of songs, including features like:
 
 ## Technologies Used
 
-Python, Tkinter (GUI)
-Pandas, NumPy (Data processing)
-Scikit-learn (Clustering, similarity, PCA)
-Google Gemini API (LLM-powered artist extraction & explanations)
-Matplotlib (Data visualization)
+- Python
+- Tkinter (GUI)
+- Pandas
+- NumPy (Data processing)
+- Scikit-learn (Clustering, similarity, PCA)
+- Google Gemini API (LLM-powered artist extraction & explanations)
+- Matplotlib (Data visualization)
 
 
 ## Example Output
