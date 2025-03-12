@@ -83,47 +83,47 @@ This is a CSV dataset of Spotify tracks, including features like:
 
 ## Example Output
 
-Welcome! I'm here to help you find new music similar to what you already enjoy.
-Tell me an artist you like, or you can type 'quit' to exit.
-
-You: i want to find songs like brandi carlile's
-
-Okay, here are some songs by Brandi Carlile:
-1. Party of One
-2. Throwing Good After Bad
-3. This Time Tomorrow
-4. When You're Wrong
-5. You and Me on the Rock
-
-Enter the number of a song for recommendations:
-
-You: 2
-
-Okay, I'll recommend you songs musically similar to "Throwing Good After Bad."
-
-Please choose a recommendation method (1 for K-means, 2 for Content-based):
-
-You: 2
-
-My recommendations:
-- cold / mess - Audiotree Live Version by Prateek Kuhad (folk)
-- Pervyy sneg by Gelena Velikanova (romance)
-- When God Dips His Love In My Heart - The March Of Dimes Show (Single Version) by Hank Williams (honky-tonk)
-- Helplessly Hoping - 2005 Remaster by Crosby, Stills & Nash (blues)
-- The Christmas Song by Aloe Blacc (soul)
-
-Why you'll like these:
-"Throwing Good After Bad" by Brandi Carlile evokes a powerful blend of vulnerability and resilience, often characterized by a strong,
-emotive vocal delivery, layered instrumentation, and a folk-pop sensibility. "cold / mess" by Prateek Kuhad shares the raw emotional
-core, with a similar focus on intimate storytelling and melancholic introspection, suggestive of Russian folk music. The "When God 
-Dips His Love In My Heart" by Hank Williams offers a different yet comparable raw emotional honesty, though firmly rooted in country 
-music tradition. The stripped-down, acoustic approach of Crosby, Stills & Nash's "Helplessly Hoping" finds resonance in its reflective 
-mood, intimate vocal harmonies; the nostalgic mood and thoughtful lvrical content of these songs link them to the introspective 
-undercurrents of Carlile's work. Finally, Aloe Blacc's "The Christmas Song" demonstrates a different yet relevant style. While a 
-holiday song, its soft and mellow approach could appeal to listeners drawn to the quiet emotional strength and folk foundations that 
-often feature in Carlile's music.
-
-The MMR score of 1.00 means these songs are very musically similar to "Throwing Good After Bad."
-The diversity of these songs is 0.00, meaning they are very similar to each other.
-
-Would you like to start with a new artist or quit? Type 'new artist' or 'quit'.
+    Welcome! I'm here to help you find new music similar to what you already enjoy.
+    Tell me an artist you like, or you can type 'quit' to exit.
+    
+    You: i want to find songs like brandi carlile's
+    
+    Okay, here are some songs by Brandi Carlile:
+    1. Party of One
+    2. Throwing Good After Bad
+    3. This Time Tomorrow
+    4. When You're Wrong
+    5. You and Me on the Rock
+    
+    Enter the number of a song for recommendations:
+    
+    You: 2
+    
+    Okay, I'll recommend you songs musically similar to "Throwing Good After Bad."
+    
+    Please choose a recommendation method (1 for K-means, 2 for Content-based):
+    
+    You: 2
+    
+    My recommendations:
+    - cold / mess - Audiotree Live Version by Prateek Kuhad (folk)
+    - Pervyy sneg by Gelena Velikanova (romance)
+    - When God Dips His Love In My Heart - The March Of Dimes Show (Single Version) by Hank Williams (honky-tonk)
+    - Helplessly Hoping - 2005 Remaster by Crosby, Stills & Nash (blues)
+    - The Christmas Song by Aloe Blacc (soul)
+    
+    Why you'll like these:
+    "Throwing Good After Bad" by Brandi Carlile evokes a powerful blend of vulnerability and resilience, often characterized by a strong,
+    emotive vocal delivery, layered instrumentation, and a folk-pop sensibility. "cold / mess" by Prateek Kuhad shares the raw emotional
+    core, with a similar focus on intimate storytelling and melancholic introspection, suggestive of Russian folk music. The "When God 
+    Dips His Love In My Heart" by Hank Williams offers a different yet comparable raw emotional honesty, though firmly rooted in country 
+    music tradition. The stripped-down, acoustic approach of Crosby, Stills & Nash's "Helplessly Hoping" finds resonance in its reflective 
+    mood, intimate vocal harmonies; the nostalgic mood and thoughtful lvrical content of these songs link them to the introspective 
+    undercurrents of Carlile's work. Finally, Aloe Blacc's "The Christmas Song" demonstrates a different yet relevant style. While a 
+    holiday song, its soft and mellow approach could appeal to listeners drawn to the quiet emotional strength and folk foundations that 
+    often feature in Carlile's music.
+    
+    The MMR score of 1.00 means these songs are very musically similar to "Throwing Good After Bad."
+    The diversity of these songs is 0.00, meaning they are very similar to each other.
+    
+    Would you like to start with a new artist or quit? Type 'new artist' or 'quit'.
