@@ -27,7 +27,7 @@ def normalize_text(text):
 warnings.filterwarnings("ignore")
 
 # configure Gemini:
-genai.configure(api_key="AIzaSyDh37esnX-KiysJhqx9P1OeWGUw67xjNh8")
+genai.configure(api_key="your api key here")
 
 
 # to extract artist name using LLM:
