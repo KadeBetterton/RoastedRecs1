@@ -64,9 +64,10 @@ python main.py
 
 Dataset used: https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset
 
-This is a CSV dataset of songs, including features like:
+This is a CSV dataset of Spotify tracks, including features like:
 - danceability, energy, loudness, speechiness, acousticness, instrumentalness, liveness, valence, tempo
-- Genres (with some excluded, e.g., anime, kids, sleep, etc.)
+- track genres
+   - We chose to exclude some genres (e.g., anime, kids, sleep, etc.) during preprocessing.
 
 
 ## Technologies Used
