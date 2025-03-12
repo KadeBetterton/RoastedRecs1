@@ -36,9 +36,9 @@ ________________________________________________________________________________
 pip install -r requirements.txt
 ```
 
-3. Set up your Google Gemini API Key (for artist name extraction & explanations):
+3. Set up your Google Gemini API Key (for artist name extraction & explanations), and replace it in this line in Harmoniac.py:
 ```
-export GEMINI_API_KEY="your_api_key_here"
+genai.configure(api_key="your api key")
 ```
 
 ## 📖 Usage
