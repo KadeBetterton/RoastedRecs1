@@ -107,8 +107,7 @@ You: 2
 My recommendations:
 - cold / mess - Audiotree Live Version by Prateek Kuhad (folk)
 - Pervyy sneg by Gelena Velikanova (romance)
-- When God Dips His Love In My Heart
-- The March Of Dimes Show (Single Version) by Hank Williams (honky-tonk)
+- When God Dips His Love In My Heart - The March Of Dimes Show (Single Version) by Hank Williams (honky-tonk)
 - Helplessly Hoping - 2005 Remaster by Crosby, Stills & Nash (blues)
 - The Christmas Song by Aloe Blacc (soul)
 
