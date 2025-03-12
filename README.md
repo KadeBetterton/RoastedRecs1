@@ -1,20 +1,12 @@
-# Harmonaic
-A music recommendation assistant.
-_________________________________________________________________________________________________________
-To use, download harmoniac.py and english_songs.csv to the same location, and run harmoniac.py.
-
-The Walthrough zip file contains a Jupyter Notebook file of data visualizations.
-_________________________________________________________________________________________________________
-
-Dataset used: https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset
-
-
 # Harmonaic 🎵  
 **A Personalized Music Recommendation Assistant**
 
 Harmonaic is a music recommendation system that uses **machine learning and natural language processing (NLP)** to suggest songs based on user input. The system leverages clustering, content-based filtering, and an interactive chatbot to provide tailored music recommendations.
+_________________________________________________________________________________________________________
 
----
+To use the recommendation system, download harmoniac.py and english_songs.csv to the same location, and run harmoniac.py (More detailed guidance below).
+The Walthrough zip file contains a Jupyter Notebook file of data visualizations.
+_________________________________________________________________________________________________________
 
 ## 🚀 Features  
 - 🎤 **Artist Name Extraction**: Uses an **LLM (Gemini API)** to extract and correct artist names from user input.  
